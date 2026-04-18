@@ -34,18 +34,23 @@ func (app *App) loadConfig() error {
 	yamlFile, err := os.ReadFile(app.configPath)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return app.createDefaultConfig()
+			if err := app.createDefaultConfig(); err != nil {
+				return err
+			}
+			yamlFile, err = os.ReadFile(app.configPath)
+			if err != nil {
+				return fmt.Errorf("读取默认配置文件失败: %w", err)
+			}
+		} else {
+			return fmt.Errorf("读取配置文件失败: %w", err)
 		}
-		return fmt.Errorf("读取配置文件失败: %w", err)
 	}
 
 	if err := yaml.Unmarshal(yamlFile, config.GlobalConfig); err != nil {
 		return fmt.Errorf("解析配置文件失败: %w", err)
 	}
 
-	if routePrefix := strings.TrimSpace(os.Getenv("ROUTE_PREFIX")); routePrefix != "" {
-		config.GlobalConfig.RoutePrefix = routePrefix
-	}
+	applyEnvOverrides()
 
 	slog.Info("配置文件读取成功")
 	return nil
@@ -60,9 +65,34 @@ func (app *App) createDefaultConfig() error {
 	}
 
 	slog.Info("默认配置文件创建成功")
-	slog.Info(fmt.Sprintf("请编辑配置文件: %s", app.configPath))
-	os.Exit(0)
+	slog.Info(fmt.Sprintf("已写入默认配置文件并继续启动: %s", app.configPath))
 	return nil
+}
+
+func applyEnvOverrides() {
+	if routePrefix := strings.TrimSpace(os.Getenv("ROUTE_PREFIX")); routePrefix != "" {
+		config.GlobalConfig.RoutePrefix = routePrefix
+	}
+
+	if listenPort := firstNonEmptyEnv("LISTEN_PORT", "PORT"); listenPort != "" {
+		config.GlobalConfig.ListenPort = normalizeListenPort(listenPort)
+	}
+}
+
+func firstNonEmptyEnv(keys ...string) string {
+	for _, key := range keys {
+		if value := strings.TrimSpace(os.Getenv(key)); value != "" {
+			return value
+		}
+	}
+	return ""
+}
+
+func normalizeListenPort(port string) string {
+	if strings.Contains(port, ":") {
+		return port
+	}
+	return ":" + port
 }
 
 // initConfigWatcher 初始化配置文件监听
