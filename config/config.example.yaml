@@ -48,6 +48,12 @@ total-speed-limit: 0
 # 更新需重启程序
 listen-port: ":8199"
 
+# 订阅服务自定义路由前缀
+# 设置后订阅服务仅通过此前缀访问，不再保留旧的无前缀地址
+# 例如设置为 "/my-sub" 后，可通过 http://127.0.0.1:8199/my-sub/all.yaml 访问
+# 也支持环境变量 ROUTE_PREFIX
+route-prefix: ""
+
 # 以节点IP查询位置重命名节点
 # 质量差的节点可能造成IP查询失败，造成整体检查速度稍微变慢，默认true
 rename-node: true
@@ -204,7 +210,7 @@ s3-bucket-lookup: "auto"
 sub-urls-retry: 3
 # 获取订阅时使用的UA；如果设置random将会使用随机UA获取订阅
 # sub-urls-get-ua: "random"
-sub-urls-get-ua: "clash.meta (https://github.com/beck-8/subs-check)"
+sub-urls-get-ua: "clash.meta (https://github.com/l-ff/subs-check)"
 # Github Proxy，获取订阅使用，结尾要带的 /
 # github-proxy: "https://ghfast.top/"
 github-proxy: ""

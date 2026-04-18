@@ -43,6 +43,7 @@ type Config struct {
 	MihomoApiUrl         string   `yaml:"mihomo-api-url"`
 	MihomoApiSecret      string   `yaml:"mihomo-api-secret"`
 	ListenPort           string   `yaml:"listen-port"`
+	RoutePrefix          string   `yaml:"route-prefix"`
 	RenameNode           bool     `yaml:"rename-node"`
 	OutputDir            string   `yaml:"output-dir"`
 	AppriseApiServer     string   `yaml:"apprise-api-server"`
@@ -77,7 +78,7 @@ var GlobalConfig = &Config{
 	Platforms:          []string{"openai", "youtube", "netflix", "disney", "gemini", "iprisk"},
 	DownloadMB:         20,
 	AliveTestUrl:       "http://gstatic.com/generate_204",
-	SubUrlsGetUA:       "clash.meta (https://github.com/beck-8/subs-check)",
+	SubUrlsGetUA:       "clash.meta (https://github.com/l-ff/subs-check)",
 	SubUrlsReTry:       3,
 }
 

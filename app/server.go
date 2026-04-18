@@ -8,11 +8,12 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
-	"github.com/beck-8/subs-check/check"
-	"github.com/beck-8/subs-check/config"
-	"github.com/beck-8/subs-check/save/method"
+	"github.com/l-ff/subs-check/check"
+	"github.com/l-ff/subs-check/config"
+	"github.com/l-ff/subs-check/save/method"
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"gopkg.in/yaml.v3"
@@ -29,16 +30,12 @@ func (app *App) initHttpServer() error {
 	}
 
 	// 静态文件路由 - 订阅服务相关，始终启用
-	// 最初不应该不带路径，现在保持兼容
-	router.StaticFile("/all.yaml", saver.OutputPath+"/all.yaml")
-	router.StaticFile("/all.txt", saver.OutputPath+"/all.txt")
-	router.StaticFile("/base64.txt", saver.OutputPath+"/base64.txt")
-	router.StaticFile("/mihomo.yaml", saver.OutputPath+"/mihomo.yaml")
-	router.StaticFile("/ACL4SSR_Online_Full.yaml", saver.OutputPath+"/ACL4SSR_Online_Full.yaml")
-	// CM佬用的布丁狗
-	router.StaticFile("/bdg.yaml", saver.OutputPath+"/bdg.yaml")
+	routePrefix := normalizeRoutePrefix(config.GlobalConfig.RoutePrefix)
+	if routePrefix != "" {
+		slog.Info("已启用自定义订阅路由前缀", "route-prefix", routePrefix)
+	}
 
-	router.Static("/sub/", saver.OutputPath)
+	registerStaticSubscriptionRoutes(router, routePrefix, saver.OutputPath)
 
 	// pprof 路由，空闲时不消耗性能
 	pprof.Register(router)
@@ -231,6 +228,33 @@ func ReadLastNLines(filePath string, n int) ([]string, error) {
 	start := count % n
 	result := append(ring[start:], ring[:start]...)
 	return result, nil
+}
+
+func normalizeRoutePrefix(prefix string) string {
+	prefix = strings.TrimSpace(prefix)
+	if prefix == "" || prefix == "/" {
+		return ""
+	}
+
+	prefix = "/" + strings.Trim(prefix, "/")
+	if prefix == "/" {
+		return ""
+	}
+
+	return prefix
+}
+
+func registerStaticSubscriptionRoutes(router *gin.Engine, routePrefix, outputPath string) {
+	basePath := routePrefix
+
+	router.StaticFile(basePath+"/all.yaml", outputPath+"/all.yaml")
+	router.StaticFile(basePath+"/all.txt", outputPath+"/all.txt")
+	router.StaticFile(basePath+"/base64.txt", outputPath+"/base64.txt")
+	router.StaticFile(basePath+"/mihomo.yaml", outputPath+"/mihomo.yaml")
+	router.StaticFile(basePath+"/ACL4SSR_Online_Full.yaml", outputPath+"/ACL4SSR_Online_Full.yaml")
+	// CM佬用的布丁狗
+	router.StaticFile(basePath+"/bdg.yaml", outputPath+"/bdg.yaml")
+	router.Static(basePath+"/sub/", outputPath)
 }
 
 func GenerateSimpleKey() string {

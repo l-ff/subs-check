@@ -5,10 +5,11 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
-	"github.com/beck-8/subs-check/config"
-	"github.com/beck-8/subs-check/utils"
+	"github.com/l-ff/subs-check/config"
+	"github.com/l-ff/subs-check/utils"
 	"github.com/fsnotify/fsnotify"
 	"gopkg.in/yaml.v3"
 )
@@ -40,6 +41,10 @@ func (app *App) loadConfig() error {
 
 	if err := yaml.Unmarshal(yamlFile, config.GlobalConfig); err != nil {
 		return fmt.Errorf("解析配置文件失败: %w", err)
+	}
+
+	if routePrefix := strings.TrimSpace(os.Getenv("ROUTE_PREFIX")); routePrefix != "" {
+		config.GlobalConfig.RoutePrefix = routePrefix
 	}
 
 	slog.Info("配置文件读取成功")

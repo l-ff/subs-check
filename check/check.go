@@ -14,9 +14,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/beck-8/subs-check/check/platform"
-	"github.com/beck-8/subs-check/config"
-	proxyutils "github.com/beck-8/subs-check/proxy"
+	"github.com/l-ff/subs-check/check/platform"
+	"github.com/l-ff/subs-check/config"
+	proxyutils "github.com/l-ff/subs-check/proxy"
 	"github.com/juju/ratelimit"
 	"github.com/metacubex/mihomo/adapter"
 	"github.com/metacubex/mihomo/constant"

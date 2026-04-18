@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"regexp"
 
-	"github.com/beck-8/subs-check/config"
+	"github.com/l-ff/subs-check/config"
 )
 
 // FilterResults 根据配置的正则表达式过滤节点。

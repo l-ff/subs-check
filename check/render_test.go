@@ -3,9 +3,9 @@ package check
 import (
 	"testing"
 
-	"github.com/beck-8/subs-check/check/platform"
-	"github.com/beck-8/subs-check/config"
-	proxyutils "github.com/beck-8/subs-check/proxy"
+	"github.com/l-ff/subs-check/check/platform"
+	"github.com/l-ff/subs-check/config"
+	proxyutils "github.com/l-ff/subs-check/proxy"
 )
 
 // withConfig 临时替换 config.GlobalConfig 的内容,测试结束后还原。
