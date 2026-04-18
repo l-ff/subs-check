@@ -251,9 +251,9 @@ func registerStaticSubscriptionRoutes(router *gin.Engine, routePrefix, outputPat
 	router.StaticFile(basePath+"/all.txt", outputPath+"/all.txt")
 	router.StaticFile(basePath+"/base64.txt", outputPath+"/base64.txt")
 	router.StaticFile(basePath+"/mihomo.yaml", outputPath+"/mihomo.yaml")
-	router.StaticFile(basePath+"/ACL4SSR_Online_Full.yaml", outputPath+"/ACL4SSR_Online_Full.yaml")
+	router.StaticFile("/ACL4SSR_Online_Full.yaml", outputPath+"/ACL4SSR_Online_Full.yaml")
 	// CM佬用的布丁狗
-	router.StaticFile(basePath+"/bdg.yaml", outputPath+"/bdg.yaml")
+	router.StaticFile("/bdg.yaml", outputPath+"/bdg.yaml")
 	router.Static(basePath+"/sub/", outputPath)
 }
 
